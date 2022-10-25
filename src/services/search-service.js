@@ -1,13 +1,10 @@
 import { searchActions } from '../store/search-slice';
+import { uiActions } from '../store/ui-slice';
 
 export const search = (searchString) => {
     return async (dispatch) => {
         const fetchData = async () => {
-            const response = await fetch(`https://localhost:7185/search/${searchString}`, {
-                headers: new Headers({
-                    "X-CSRF": "1",
-                }),
-            });
+            const response = await fetch(`${process.env.REACT_APP_BASE_URL}/search/${searchString}`);
 
             if (!response.ok) {
                 throw new Error('Error happened!');
@@ -18,14 +15,20 @@ export const search = (searchString) => {
         };
 
         try {
-            // todo: show loading
+            dispatch(uiActions.setLoading({ isLoading: true }));
+            dispatch(uiActions.setNoResultFound({ notResultFound: false }));
+
             const searchedData = await fetchData();
+
             dispatch(searchActions.search({ entities: searchedData }));
+            dispatch(uiActions.setNoResultFound({ 
+                noResultFound: searchedData && searchedData.length !== 0 ? false : true 
+            }));
         } catch (error) {
             //todo: show error
         }
         finally {
-           // todo: loading
+            dispatch(uiActions.setLoading({ isLoading: false }));
         }
     }
 }
