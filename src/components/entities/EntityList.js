@@ -25,7 +25,7 @@ EntityList.defaultProps = {
 EntityList.propTypes = {
     data: PropTypes.arrayOf(PropTypes.shape({
         id: PropTypes.string,
-        fullDescription: PropTypes.string,
+        fields: PropTypes.arrayOf(PropTypes.string),
         weight: PropTypes.number,
     })),
 };
